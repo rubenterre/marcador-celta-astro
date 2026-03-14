@@ -86,17 +86,13 @@ import celtaLogo from '../assets/celta-escudo.svg';
 async function fetchNextFixtureFD() {
   const res = await fetch('/.netlify/functions/celta-next-match');
   if (!res.ok) {
-    throw new Error('Error HTTP ' + res.status);
+    const data = await res.json().catch(() => ({}));
+    throw new Error(`Error HTTP ${res.status} ${data.error || ''}`.trim());
   }
   const data = await res.json();
-  if (!data.matches || data.matches.length === 0) {
-    throw new Error('No hay próximos partidos para el Celta');
-  }
-  const sorted = data.matches.slice().sort(
-    (a, b) => new Date(a.utcDate) - new Date(b.utcDate)
-  );
-  return sorted[0];
+  return data.match; // ya te viene solo un partido
 }
+
 
 
   function formatDateTime(isoStr) {
