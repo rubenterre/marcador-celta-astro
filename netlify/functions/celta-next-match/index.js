@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const FD_API_KEY = process.env.FD_API_KEY;
+const FD_API_KEY = process.env.API_KEY_FOOTBALL_DATA;
 const FD_BASE_URL = 'https://api.football-data.org/v4';
 const FD_TEAM_CELTA_ID = 558;
 const FD_COMPETITION_LALIGA = 'PD';
