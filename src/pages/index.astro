@@ -1,11 +1,263 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+<div class="dashboard-shell">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-badge">
+          <div class="brand-badge-inner"></div>
+        </div>
+        <div class="brand-text">
+          <div class="brand-sub">Dashboard · Home</div>
+          <div class="brand-main">RC Celta · Próximo partido</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="season-pill">
+          <span class="season-dot"></span>
+          <span id="season-label">Temporada 2025-26 · LALIGA</span>
+        </div>
+        <div class="last-update" id="last-update">Actualizando datos…</div>
+      </div>
+    </header>
+
+    <section class="match-card">
+      <div class="match-card-header">
+        <div class="match-title-block">
+          <div class="match-title">Próximo partido</div>
+          <div class="match-subtitle" id="match-subtitle">
+            Buscando el próximo partido del RC Celta…
+          </div>
+        </div>
+        <div id="live-pill-container">
+          <!-- Se rellena dinámicamente: EN DIRECTO / Próximamente / Finalizado -->
+        </div>
+      </div>
+
+      <div class="match-main" id="match-main" style="opacity: 0.25;">
+        <div class="team home">
+          <div class="team-logo-wrap">
+            <img id="home-logo" class="team-logo" src="" alt="Home" />
+          </div>
+          <div>
+            <div class="team-name" id="home-name">—</div>
+            <div class="team-tag" id="home-tag" style="display:none">Celta</div>
+          </div>
+        </div>
+
+        <div class="vs-block">
+          <div class="vs-label">VS</div>
+          <div class="match-kickoff" id="match-kickoff">—</div>
+          <div class="match-extra-info" id="match-extra-info">—</div>
+        </div>
+
+        <div class="team away">
+          <div class="team-logo-wrap">
+            <img id="away-logo" class="team-logo" src="" alt="Away" />
+          </div>
+          <div>
+            <div class="team-name" id="away-name">—</div>
+            <div class="team-tag" id="away-tag" style="display:none">Celta</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="match-footer">
+        <div class="competition" id="competition">—</div>
+        <div class="stadium" id="stadium">—</div>
+      </div>
+
+      <div class="loading" id="loading-msg">Conectando con API-Football…</div>
+      <div class="status-message" id="error-msg" style="display:none;"></div>
+    </section>
+  </div>
+
+  <script>
+    // CONFIG – Rellena con tus datos de API-Football
+    const API_KEY = 'TU_API_KEY_AQUI';
+    const API_HOST = 'v3.football.api-sports.io';
+    const TEAM_CELTA_ID = 538; // Celta de Vigo (LaLiga)
+    const TIMEZONE = 'Europe/Madrid';
+
+    async function fetchNextFixture() {
+      const url = `https://${API_HOST}/fixtures?team=${TEAM_CELTA_ID}&next=1&timezone=${encodeURIComponent(TIMEZONE)}`;
+      const res = await fetch(url, {
+        headers: {
+          'x-apisports-key': API_KEY
+        }
+      });
+      if (!res.ok) {
+        throw new Error('Error HTTP ' + res.status);
+      }
+      const data = await res.json();
+      if (!data.response || data.response.length === 0) {
+        throw new Error('No hay próximos partidos para el Celta');
+      }
+      return data.response[0];
+    }
+
+    function formatDateTime(isoStr) {
+      const dt = new Date(isoStr);
+      const optsDate = { weekday: 'short', day: '2-digit', month: 'short' };
+      const optsTime = { hour: '2-digit', minute: '2-digit' };
+      const dateStr = dt.toLocaleDateString('es-ES', optsDate);
+      const timeStr = dt.toLocaleTimeString('es-ES', optsTime);
+      return { dateStr, timeStr };
+    }
+
+    function getLivePill(statusShort) {
+      // https://www.api-football.com/documentation-v3#operation/get-fixtures
+      const inPlayStatuses = ['1H','2H','ET','P','BT','LIVE'];
+      const finishedStatuses = ['FT','AET','PEN'];
+      const notStartedStatuses = ['NS','TBD'];
+
+      if (inPlayStatuses.includes(statusShort)) {
+        return {
+          html: `
+            <div class="pill-live">
+              <span class="pill-live-dot"></span>
+              <span>En directo</span>
+            </div>
+          `,
+          aria: 'Partido en directo'
+        };
+      }
+
+      if (finishedStatuses.includes(statusShort)) {
+        return {
+          html: `
+            <div class="pill-finished">
+              <span class="pill-finished-dot"></span>
+              <span>Finalizado</span>
+            </div>
+          `,
+          aria: 'Partido finalizado'
+        };
+      }
+
+      if (notStartedStatuses.includes(statusShort)) {
+        return {
+          html: `
+            <div class="pill-soon">
+              <span class="pill-soon-dot"></span>
+              <span>Próximamente</span>
+            </div>
+          `,
+          aria: 'Partido pendiente de comenzar'
+        };
+      }
+
+      // fallback genérico
+      return {
+        html: `
+          <div class="pill-soon">
+            <span class="pill-soon-dot"></span>
+            <span>${statusShort}</span>
+          </div>
+        `,
+        aria: 'Estado del partido'
+      };
+    }
+
+    function updateUI(fixture) {
+      const matchMain = document.getElementById('match-main');
+      const subtitle = document.getElementById('match-subtitle');
+      const livePillContainer = document.getElementById('live-pill-container');
+      const competition = document.getElementById('competition');
+      const stadium = document.getElementById('stadium');
+      const lastUpdate = document.getElementById('last-update');
+      const loadingMsg = document.getElementById('loading-msg');
+
+      const homeName = document.getElementById('home-name');
+      const homeLogo = document.getElementById('home-logo');
+      const awayName = document.getElementById('away-name');
+      const awayLogo = document.getElementById('away-logo');
+      const homeTag = document.getElementById('home-tag');
+      const awayTag = document.getElementById('away-tag');
+      const kickoff = document.getElementById('match-kickoff');
+      const extraInfo = document.getElementById('match-extra-info');
+
+      const league = fixture.league;
+      const teams = fixture.teams;
+      const venue = fixture.venue;
+      const date = fixture.fixture.date;
+      const status = fixture.fixture.status;
+
+      const { dateStr, timeStr } = formatDateTime(date);
+
+      // Pill EN DIRECTO / estados
+      const pill = getLivePill(status.short);
+      livePillContainer.innerHTML = pill.html;
+      livePillContainer.setAttribute('aria-label', pill.aria);
+
+      // Títulos
+      subtitle.textContent = `${league.round || league.name}`;
+
+      // Equipos
+      homeName.textContent = teams.home.name;
+      homeLogo.src = teams.home.logo;
+      homeLogo.alt = teams.home.name;
+
+      awayName.textContent = teams.away.name;
+      awayLogo.src = teams.away.logo;
+      awayLogo.alt = teams.away.name;
+
+      // Mostrar tag "Celta" si corresponde
+      const isHomeCelta = teams.home.id === TEAM_CELTA_ID;
+      const isAwayCelta = teams.away.id === TEAM_CELTA_ID;
+      homeTag.style.display = isHomeCelta ? 'inline-flex' : 'none';
+      awayTag.style.display = isAwayCelta ? 'inline-flex' : 'none';
+
+      // Fecha / hora
+      kickoff.textContent = `${dateStr} · ${timeStr}`;
+      extraInfo.textContent = `Horario ${status.timezone || TIMEZONE}`;
+
+      // Competición / estadio
+      competition.textContent = `${league.name} · Jornada ${league.round || ''}`.trim();
+      stadium.textContent = venue.name
+        ? `${venue.name}${venue.city ? ' · ' + venue.city : ''}`
+        : 'Estadio por confirmar';
+
+      // Última actualización
+      const now = new Date();
+      const timeNow = now.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      lastUpdate.textContent = `Última actualización · ${timeNow}`;
+
+      // Visual
+      matchMain.style.opacity = '1';
+      loadingMsg.style.display = 'none';
+    }
+
+    function showError(err) {
+      const errorMsg = document.getElementById('error-msg');
+      const loadingMsg = document.getElementById('loading-msg');
+      const lastUpdate = document.getElementById('last-update');
+      loadingMsg.style.display = 'none';
+      errorMsg.style.display = 'block';
+      errorMsg.textContent = `Error al cargar el próximo partido: ${err.message}`;
+      lastUpdate.textContent = 'Error de conexión con API-Football';
+    }
+
+    async function init() {
+      try {
+        const fixture = await fetchNextFixture();
+        updateUI(fixture);
+      } catch (err) {
+        console.error(err);
+        showError(err);
+      }
+    }
+
+    // Primera carga
+    init();
+
+    // Opcional: refresco cada 5 minutos
+    // setInterval(init, 5 * 60 * 1000);
+  </script>
 </Layout>
