@@ -23,6 +23,7 @@ export default async function handler(req) {
     url.searchParams.set('competitions', FD_COMPETITION_LALIGA);
     url.searchParams.set('dateFrom', new Date().toISOString().slice(0, 10));
 
+    // Aquí usamos fetch global que Netlify ya expone
     const apiRes = await fetch(url.toString(), {
       headers: { 'X-Auth-Token': FD_API_KEY },
     });
