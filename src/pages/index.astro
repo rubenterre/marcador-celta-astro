@@ -240,7 +240,7 @@ import laligaLogo from "../assets/laliga-logo.svg";
       competition.textContent =
         comp.name + (match.matchday ? ` · Jornada ${match.matchday}` : "");
 
-      stadium.textContent = venueName || "Estadio por confirmar";
+      stadium.textContent = `Estadio del ${venueName}` || "Estadio por confirmar";
 
       const now = new Date();
       const timeNow = now.toLocaleTimeString("es-ES", {
