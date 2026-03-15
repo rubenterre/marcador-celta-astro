@@ -1,13 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import celtaLogo from "../assets/celta-escudo.svg";
+import laligaLogo from "../assets/laliga-logo.svg";
 ---
 
 <Layout>
   <div class="dashboard-shell">
     <header class="header">
       <div class="brand">
-        <div class="brand-badge"></div>
+        <div class="brand-badge">
+          <img class="brand-badge__img" src={laligaLogo.src} alt="Logo de La Liga">
+        </div>
         <div class="brand-text">
           <div class="brand-sub">Dashboard · Home</div>
           <div class="brand-main">RC Celta · Próximo partido</div>
@@ -282,13 +285,13 @@ import celtaLogo from "../assets/celta-escudo.svg";
   .dashboard-shell {
     width: 100%;
     max-width: 520px;
-    background: rgba(11, 23, 32, 0.92);
+    /* background: rgba(11, 23, 32, 0.92); */
     border-radius: 24px;
-    border: 1px solid var(--border-soft);
+    /* border: 1px solid var(--border-soft); */
     backdrop-filter: blur(14px);
-    box-shadow:
+/*     box-shadow:
       0 24px 60px rgba(0, 0, 0, 0.7),
-      0 0 0 1px rgba(0, 0, 0, 0.6);
+      0 0 0 1px rgba(0, 0, 0, 0.6); */
     padding: 18px 20px 20px;
     display: flex;
     flex-direction: column;
