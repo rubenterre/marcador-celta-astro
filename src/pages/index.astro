@@ -201,7 +201,7 @@ import laligaLogo from "../assets/laliga-logo.svg";
       const comp = match.competition;
       const status = match.status;
       const utcDate = match.utcDate;
-      const venueName = match.venue; // en algunos planes viene en match.venue / matchArea; si no, usamos ciudad del homeTeam. [web:22]
+      const venueName = match.homeTeam;
 
       const { dateStr, timeStr } = formatDateTime(utcDate);
 
@@ -276,7 +276,7 @@ import laligaLogo from "../assets/laliga-logo.svg";
     // Primera carga
     initFD();
 
-    // Opcional: refresco cada 5 minutos
+    // Opcional: refresco cada 15 minutos
     setInterval(initFD, 15 * 60 * 1000);
   </script>
 </Layout>
