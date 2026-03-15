@@ -90,9 +90,39 @@ async function fetchNextFixtureFD() {
     throw new Error(`Error HTTP ${res.status} ${data.error || ''}`.trim());
   }
   const data = await res.json();
+  console.log(data)
   return data.match; // ya te viene solo un partido
 }
 
+// ids según football-data.org para PD (Primera División)
+export const LALIGA_TEAM_LOGOS = {
+  558: { name: 'RC Celta de Vigo', logo: '/assets/logos/celta.svg' },
+  86: { name: 'Real Madrid CF', logo: '/assets/logos/real-madrid.svg' },
+  81: { name: 'FC Barcelona', logo: '/assets/logos/barcelona.svg' },
+
+    // Completa estos una vez tengas el id de cada uno desde la API:
+  'id_valencia':    { name: 'Valencia CF',        logo: '/logos/valencia.svg' },
+  // 'id-atletico':    { name: 'Atlético de Madrid', logo: '/logos/atletico.svg' },
+  // 'id-sevilla':     { name: 'Sevilla FC',         logo: '/logos/sevilla.svg' },
+  // 'id-betis':       { name: 'Real Betis',         logo: '/logos/betis.svg' },
+  // 'id-real-soc':    { name: 'Real Sociedad',      logo: '/logos/real-sociedad.svg' },
+  // 'id-villarreal':  { name: 'Villarreal CF',      logo: '/logos/villarreal.svg' },
+  // 'id-athletic':    { name: 'Athletic Club',      logo: '/logos/athletic.svg' },
+  // 'id-osasuna':     { name: 'CA Osasuna',         logo: '/logos/osasuna.svg' },
+  // 'id-rayo':        { name: 'Rayo Vallecano',     logo: '/logos/rayo.svg' },
+  // 'id-alaves':      { name: 'Deportivo Alavés',   logo: '/logos/alaves.svg' },
+  // 'id-espanyol':    { name: 'RCD Espanyol',       logo: '/logos/espanyol.svg' },
+  // 'id-elche':       { name: 'Elche CF',           logo: '/logos/elche.svg' },
+  // 'id-getafe':      { name: 'Getafe CF',          logo: '/logos/getafe.svg' },
+  // 'id-mallorca':    { name: 'RCD Mallorca',       logo: '/logos/mallorca.svg' },
+  // 'id-levante':     { name: 'Levante UD',         logo: '/logos/levante.svg' },
+  // 'id-oviedo':      { name: 'Real Oviedo',        logo: '/logos/oviedo.svg' },
+  // 'id-girona':      { name: 'Girona FC',          logo: '/logos/girona.svg' },
+};
+
+export function getTeamLogo(teamId) {
+  return LALIGA_TEAM_LOGOS[teamId]?.logo || '/assets/logos/default.svg';
+}
 
 
   function formatDateTime(isoStr) {
@@ -192,12 +222,16 @@ async function fetchNextFixtureFD() {
     homeName.textContent = homeTeam.name;
     awayName.textContent = awayTeam.name;
 
+    homeLogo.src = getTeamLogo(homeTeam.id);
+    awayLogo.src = getTeamLogo(awayTeam.id);
+
     // Logos: football-data.org devuelve crest en team/competition; para simplificar, dejamos placeholders SVG propios o URLs tuyas.
     // Aquí dejo atributos vacíos para que los rellenes tú con tus rutas locales, escudos oficiales, etc. [web:23]
-    homeLogo.src = '';
+/*  homeLogo.src = ''; */
     homeLogo.alt = homeTeam.name;
-    awayLogo.src = '';
+  /*  awayLogo.src = ''; */
     awayLogo.alt = awayTeam.name;
+
 
     const isHomeCelta = homeTeam.id === FD_TEAM_CELTA_ID;
     const isAwayCelta = awayTeam.id === FD_TEAM_CELTA_ID;
@@ -246,7 +280,7 @@ async function fetchNextFixtureFD() {
   initFD();
 
   // Opcional: refresco cada 5 minutos
-  // setInterval(initFD, 5 * 60 * 1000);
+   setInterval(initFD, 15 * 60 * 1000);
 </script>
 
 
