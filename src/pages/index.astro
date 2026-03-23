@@ -96,30 +96,30 @@ import laligaLogo from "../assets/laliga-logo.svg";
     }
 
     export const LALIGA_TEAM_LOGOS = {
-      558: { name: "RC Celta de Vigo", logo: "/logos/celta.svg" },
-      86: { name: "Real Madrid CF", logo: "/logos/real-madrid.svg" },
-      81: { name: "FC Barcelona", logo: "/logos/barcelona.svg" },
-      95: { name: "Valencia CF", logo: "/logos/valencia.svg" },
-      78: { name: "Atlético de Madrid", logo: "/logos/atletico.svg" },
-      559: { name: "Sevilla FC", logo: "/logos/sevilla.svg" },
-      90: { name: "Real Betis", logo: "/logos/betis.svg" },
-      92: { name: "Real Sociedad", logo: "/logos/real-sociedad.svg" },
-      94: { name: "Villarreal CF", logo: "/logos/villarreal.svg" },
-      77: { name: "Athletic Club", logo: "/logos/athletic.svg" },
-      79: { name: "CA Osasuna", logo: "/logos/osasuna.svg" },
-      87: { name: "Rayo Vallecano", logo: "/logos/rayo.svg" },
-      263: { name: "Deportivo Alavés", logo: "/logos/alaves.svg" },
-      80: { name: "RCD Espanyol", logo: "/logos/espanyol.svg" },
-      285: { name: "Elche CF", logo: "/logos/elche.svg" },
-      82: { name: "Getafe CF", logo: "/logos/getafe.svg" },
-      89: { name: "RCD Mallorca", logo: "/logos/mallorca.svg" },
-      88: { name: "Levante UD", logo: "/logos/levante.svg" },
-      1048: { name: "Real Oviedo", logo: "/logos/oviedo.svg" },
-      298: { name: "Girona FC", logo: "/logos/girona.svg" },
+      558: { name: "RC Celta de Vigo", logo: "/logos/celta.png" },
+      86: { name: "Real Madrid CF", logo: "/logos/real-madrid.png" },
+      81: { name: "FC Barcelona", logo: "/logos/barcelona.png" },
+      95: { name: "Valencia CF", logo: "/logos/valencia.png" },
+      78: { name: "Atlético de Madrid", logo: "/logos/atletico.png" },
+      559: { name: "Sevilla FC", logo: "/logos/sevilla.png" },
+      90: { name: "Real Betis", logo: "/logos/betis.png" },
+      92: { name: "Real Sociedad", logo: "/logos/real-sociedad.png" },
+      94: { name: "Villarreal CF", logo: "/logos/villarreal.png" },
+      77: { name: "Athletic Club", logo: "/logos/athletic.png" },
+      79: { name: "CA Osasuna", logo: "/logos/osasuna.png" },
+      87: { name: "Rayo Vallecano", logo: "/logos/rayo.png" },
+      263: { name: "Deportivo Alavés", logo: "/logos/alaves.png" },
+      80: { name: "RCD Espanyol", logo: "/logos/espanyol.png" },
+      285: { name: "Elche CF", logo: "/logos/elche.png" },
+      82: { name: "Getafe CF", logo: "/logos/getafe.png" },
+      89: { name: "RCD Mallorca", logo: "/logos/mallorca.png" },
+      88: { name: "Levante UD", logo: "/logos/levante.png" },
+      1048: { name: "Real Oviedo", logo: "/logos/oviedo.png" },
+      298: { name: "Girona FC", logo: "/logos/girona.png" },
     };
 
     export function getTeamLogo(teamId) {
-      return LALIGA_TEAM_LOGOS[teamId]?.logo || "/assets/logos/default.svg";
+      return LALIGA_TEAM_LOGOS[teamId]?.logo || "/assets/logos/default.gif";
     }
 
     function formatDateTime(isoStr) {
@@ -222,7 +222,7 @@ import laligaLogo from "../assets/laliga-logo.svg";
       homeLogo.src = getTeamLogo(homeTeam.id);
       awayLogo.src = getTeamLogo(awayTeam.id);
 
-      // Logos: football-data.org devuelve crest en team/competition; para simplificar, dejamos placeholders SVG propios o URLs tuyas.
+      // Logos: football-data.org devuelve crest en team/competition; para simplificar, dejamos placeholders png propios o URLs tuyas.
       // Aquí dejo atributos vacíos para que los rellenes tú con tus rutas locales, escudos oficiales, etc. [web:23]
       /*  homeLogo.src = ''; */
       homeLogo.alt = homeTeam.name;
