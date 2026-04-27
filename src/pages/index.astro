@@ -122,14 +122,38 @@ import laligaLogo from "../assets/laliga-logo.svg";
       return LALIGA_TEAM_LOGOS[teamId]?.logo || "/assets/logos/default.gif";
     }
 
-    function formatDateTime(isoStr) {
+/*     function formatDateTime(isoStr) {
       const dt = new Date(isoStr);
       const optsDate = { weekday: "short", day: "2-digit", month: "short" };
       const optsTime = { hour: "2-digit", minute: "2-digit" };
       const dateStr = dt.toLocaleDateString("es-ES", optsDate);
       const timeStr = dt.toLocaleTimeString("es-ES", optsTime);
       return { dateStr, timeStr };
-    }
+    } */
+
+    function formatDateTime(isoStr) {
+  const dt = new Date(isoStr);
+  
+  // Definimos las opciones incluyendo el TimeZone de España
+  const optsDate = { 
+    weekday: "short", 
+    day: "2-digit", 
+    month: "short", 
+    timeZone: TIMEZONE 
+  };
+  
+  const optsTime = { 
+    hour: "2-digit", 
+    minute: "2-digit", 
+    hour12: false,    
+    timeZone: TIMEZONE  
+  };
+
+  const dateStr = dt.toLocaleDateString("es-ES", optsDate);
+  const timeStr = dt.toLocaleTimeString("es-ES", optsTime);
+  
+  return { dateStr, timeStr };
+}
 
     function getLivePillFD(status) {
       // Status en football-data.org: SCHEDULED, IN_PLAY, PAUSED, FINISHED, etc. [web:22]
